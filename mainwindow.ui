@@ -6,25 +6,68 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>837</width>
-    <height>504</height>
+    <width>552</width>
+    <height>421</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
-  <widget class="QWidget" name="centralWidget"/>
+  <widget class="QWidget" name="centralWidget">
+   <widget class="QTableView" name="tableView">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>531</width>
+      <height>201</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="solveButton">
+    <property name="geometry">
+     <rect>
+      <x>160</x>
+      <y>260</y>
+      <width>241</width>
+      <height>91</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Solve</string>
+    </property>
+   </widget>
+  </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>837</width>
+     <width>552</width>
      <height>25</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuChoose_problem">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionChoose_problem"/>
+    <addaction name="separator"/>
+    <addaction name="actionAdd_solver"/>
+   </widget>
+   <addaction name="menuChoose_problem"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionChoose_problem">
+   <property name="text">
+    <string>Choose problem</string>
+   </property>
+  </action>
+  <action name="actionAdd_solver">
+   <property name="text">
+    <string>Add solver</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>

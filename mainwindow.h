@@ -31,7 +31,7 @@ private:
 
 private slots:
     void onSolve();
-    void onChooseTask(const QString &path);
+    void onChooseProblem();
     void onAddSolver();
 };
 
