@@ -12,3 +12,19 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
+
+void MainWindow::onSolve()
+{
+    //TODO: ...
+}
+
+void MainWindow::onChooseTask(const QString &path)
+{
+    //TODO: ...
+}
+
+void MainWindow::onAddSolver()
+{
+    //TODO: ...
+}
+
