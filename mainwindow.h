@@ -36,7 +36,7 @@ private:
 
 private slots:
     void onSolve();
-    void onChooseTask();
+    void onChooseProblem();
     void onAddSolver();
 
 private:
