@@ -13,6 +13,15 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    Interfaces/IBrocker.h \
+    Interfaces/ISolver.h \
+    Interfaces/IProblem.h \
+    Interfaces/SHARED_EXPORT.h
 
 FORMS    += mainwindow.ui
+QMAKE_CXXFLAGS += -std=gnu++0x
+
+
+
+
