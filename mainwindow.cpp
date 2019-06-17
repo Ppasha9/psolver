@@ -131,6 +131,10 @@ void MainWindow::onSolve()
     {
         QObject *item = *it;
 
+        QVariant id = item->property("hasData");
+        if (id.isNull())
+            continue;
+
         QVariant prop = item->property("text");
         if (prop.isNull())
             continue;
