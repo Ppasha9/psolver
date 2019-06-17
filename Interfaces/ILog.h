@@ -12,5 +12,4 @@ public:
     static void destroy();
 };
 
-
 #endif // ILog_H

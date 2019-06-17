@@ -3,6 +3,7 @@
 
 #include "error.h"
 #include "SHARED_EXPORT.h"
+#include <qglobal.h>
 
 class SHARED_EXPORT IVector
 {

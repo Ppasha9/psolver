@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QtSql/QSqlDatabase>
 
 namespace Ui {
     class MainWindow;
@@ -32,7 +33,8 @@ private:
     bool loadSolver(const QString &path);
     bool loadProblem(const QString &path);
 
-    void solve();
+    void execQuery(const QString &query);
+    void selectAll();
 
 private slots:
     void onSolve();
@@ -40,11 +42,12 @@ private slots:
     void onAddSolver();
 
 private:
-    IBrocker *m_ptrProblemBrocker;
-    IBrocker *m_ptrSolverBrocker;
+    typedef IBrocker * (*GetBrockerFunc)();
 
     IProblem *m_ptrProblem;
     ISolver  *m_ptrSolver;
+
+    QSqlDatabase m_db;
 };
 
 #endif // MAINWINDOW_H
