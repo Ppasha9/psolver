@@ -34,7 +34,7 @@ public:
     unsigned int getDim() const;
     int norm(NormType type, double& res) const;
     int setCoord(unsigned int index, double elem);
-    int getCoord(unsigned int index, double & elem);
+    int getCoord(unsigned int index, double & elem) const;
     int setAllCoords(unsigned int dim, double* coords);
     int getCoordsPtr(unsigned int & dim, double const*& elem) const;
     IVector* clone() const;
@@ -43,8 +43,8 @@ private:
     Vector(unsigned int size, double* vals);
 
     // Data
-    unsigned int _size;
-    double*  _vals;
+    unsigned int m_size;
+    double*  m_vals;
 };
 
 #endif // VECTOR_H

@@ -11,11 +11,14 @@ QT       += qml
 TARGET = PSolver
 TEMPLATE = app
 
+DEFINES += SHARED_BUILT_AS_STATIC
+
 
 SOURCES += main.cpp\
         mainwindow.cpp \
     qsqlconnectiondialog.cpp \
-    solverparamsdialog.cpp
+    solverparamsdialog.cpp \
+    resultdialog.cpp
 
 HEADERS  += mainwindow.h \
     Interfaces/IBrocker.h \
@@ -26,16 +29,27 @@ HEADERS  += mainwindow.h \
     solverparamsdialog.h \
     Interfaces/ILog.h \
     Interfaces/IVector.h \
-    Interfaces/Vector.h
+    Interfaces/Vector.h \
+    resultdialog.h \
+    Interfaces/error.h
 
 FORMS    += mainwindow.ui \
             qsqlconnectiondialog.ui \
-            solverparamsdialog.ui
+            solverparamsdialog.ui \
+    resultdialog.ui
 
 LIBS += "$$PWD/ILog.dll" \
         "$$PWD/math.dll"
 
 QMAKE_CXXFLAGS += -std=gnu++0x
+
+
+
+
+
+
+
+
 
 
 

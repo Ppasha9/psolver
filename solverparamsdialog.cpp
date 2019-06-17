@@ -6,6 +6,8 @@ SolverParamsDialog::SolverParamsDialog(QWidget *parent) :
     ui(new Ui::SolverParamsDialog)
 {
     ui->setupUi(this);
+    QString title = "Solver's parameters";
+    setWindowTitle(title);
 }
 
 SolverParamsDialog::~SolverParamsDialog()

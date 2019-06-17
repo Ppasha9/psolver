@@ -20,6 +20,19 @@
 
 #include "qsqlconnectiondialog.h"
 #include "solverparamsdialog.h"
+#include "resultdialog.h"
+
+#define REPORT(MSG) \
+    QString qmsg("[CONTROLLER]:  "); \
+    qmsg += QString(MSG); \
+    qmsg += "\n\t\tFile: "; \
+    qmsg += __FILE__; \
+    qmsg += "\n\t\tLine: "; \
+    qmsg += QString::number(__LINE__); \
+    qmsg += "\n\t\tFunction: "; \
+    qmsg += __FUNCTION__; \
+    ILog::report(qmsg.toStdString().c_str())
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -106,7 +119,6 @@ void MainWindow::onSolve()
     // Show parameters dialogue
     QUrl url;
     m_ptrSolver->getQml(url);
-    m_ptrSolver->setProblem(m_ptrProblem);
 
     SolverParamsDialog paramDialog(this);
     QDeclarativeView *&ui = paramDialog.getSolverParamsView();
@@ -117,8 +129,6 @@ void MainWindow::onSolve()
     url = QUrl(absoluteQmlPath);
 
     ui->setSource(url);
-    //ui->setSource(QUrl("qrc:/testqml.qml"));
-
     ui->setResizeMode(QDeclarativeView::SizeRootObjectToView);
 
     if (paramDialog.exec() != QDialog::Accepted)
@@ -141,13 +151,16 @@ void MainWindow::onSolve()
         params += prop.toString();
         params += "; ";
     }
+    statusBar()->showMessage(QString("Setting solver parameters..."));
+    m_ptrSolver->setProblem(m_ptrProblem);
     m_ptrSolver->setParams(params);
 
+    statusBar()->showMessage(QString("Solving..."));
     m_ptrSolver->solve();
 
     size_t dim;
     m_ptrProblem->getArgsDim(dim);
-    double *sol = new double[dim];
+    double * sol = new (std::nothrow) double[dim];
 
     IVector * solution = Vector::createVector(dim, sol);
     m_ptrSolver->getSolution(solution);
@@ -158,11 +171,31 @@ void MainWindow::onSolve()
     {
         double x;
         solution->getCoord(i, x);
-        ILog::report(QString::number(x).toStdString().c_str());
+        REPORT(QString::number(x).toStdString().c_str());
     }
 
-    delete [] sol;
+    /*
+    double *sol = new double[2];
+    IVector * solution = Vector::createVector(2, sol);
+    solution->setCoord(0, -0.7);
+    solution->setCoord(1, -0.4);
+    */
+
     // Show result window
+    ResultDialog resultDialog(this);
+    ErrorEnum err = (ErrorEnum)resultDialog.setSolution(solution);
+    if (err != ERR_OK)
+    {
+        delete [] solution;
+        delete [] sol;
+        return;
+    }
+
+    if (resultDialog.exec() != QDialog::Accepted)
+        return;
+
+    delete [] solution;
+    delete [] sol;
 }
 
 void MainWindow::onChooseProblem()
@@ -218,6 +251,7 @@ bool MainWindow::loadSolver(const QString &path)
     bool loadResult = libSolver.load();
     if (!loadResult)
     {
+        REPORT(QString("Couldn't load solver library: ") + path);
         statusBar()->showMessage(QString("Couldn't load solver library: ") + path);
         return false;
     }
@@ -225,6 +259,7 @@ bool MainWindow::loadSolver(const QString &path)
     GetBrockerFunc solverBrockerFunc = reinterpret_cast<GetBrockerFunc>(libSolver.resolve("getBrocker"));
     if (!solverBrockerFunc)
     {
+        REPORT(QString("Couldn't resolve 'getBrocker' function from library: ") + path);
         statusBar()->showMessage(QString("Couldn't resolve 'getBrocker' function from library: ") + path);
         return false;
     }
@@ -237,6 +272,7 @@ bool MainWindow::loadSolver(const QString &path)
     }
     else
     {
+        REPORT(QString("Couldn't get 'ISolver' implementation from library: ") + path);
         statusBar()->showMessage(QString("Couldn't get 'ISolver' implementation from library: ") + path);
         return false;
     }
@@ -244,10 +280,12 @@ bool MainWindow::loadSolver(const QString &path)
     m_ptrSolver = reinterpret_cast<ISolver *>(interfaceImpl);
     if (!m_ptrSolver)
     {
+        REPORT(QString("Couldn't get 'ISolver' implementation from library: ") + path);
         statusBar()->showMessage(QString("Couldn't get 'ISolver' implementation from library: ") + path);
         return false;
     }
 
+    statusBar()->showMessage(QString("Solver successfully loaded."));
     return true;
 }
 
@@ -260,6 +298,7 @@ bool MainWindow::loadProblem(const QString &path)
     bool loadResult = libProblem.load();
     if (!loadResult)
     {
+        REPORT(QString("Couldn't load problem library: ") + path);
         statusBar()->showMessage(QString("Couldn't load problem library: ") + path);
         return false;
     }
@@ -267,6 +306,7 @@ bool MainWindow::loadProblem(const QString &path)
     GetBrockerFunc problemBrockerFunc = reinterpret_cast<GetBrockerFunc>(libProblem.resolve("getBrocker"));
     if (!problemBrockerFunc)
     {
+        REPORT(QString("Couldn't resolve 'getBrocker' function from library: ") + path);
         statusBar()->showMessage(QString("Couldn't resolve 'getBrocker' function from library: ") + path);
         return false;
     }
@@ -279,6 +319,7 @@ bool MainWindow::loadProblem(const QString &path)
     }
     else
     {
+        REPORT(QString("Couldn't get 'IProblem' implementation from library: ") + path);
         statusBar()->showMessage(QString("Couldn't get 'IProblem' implementation from library: ") + path);
         return false;
     }
@@ -286,14 +327,11 @@ bool MainWindow::loadProblem(const QString &path)
     m_ptrProblem = reinterpret_cast<IProblem *>(interfaceImpl);
     if (!m_ptrProblem)
     {
+        REPORT(QString("Couldn't get 'IProblem' implementation from library: ") + path);
         statusBar()->showMessage(QString("Couldn't get 'IProblem' implementation from library: ") + path);
         return false;
     }
 
     statusBar()->showMessage(QString("Problem successfully loaded."));
-
-    double res;
-    ErrorEnum err = (ErrorEnum)m_ptrProblem->goalFunction(NULL, NULL, res);
-
     return true;
 }
