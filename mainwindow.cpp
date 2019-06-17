@@ -165,8 +165,6 @@ void MainWindow::onSolve()
     IVector * solution = Vector::createVector(dim, sol);
     m_ptrSolver->getSolution(solution);
 
-    // SOLUTION MUST BE (-0.7;-0.4)
-
     for (unsigned int i = 0; i < dim; i++)
     {
         double x;
@@ -174,19 +172,12 @@ void MainWindow::onSolve()
         REPORT(QString::number(x).toStdString().c_str());
     }
 
-    /*
-    double *sol = new double[2];
-    IVector * solution = Vector::createVector(2, sol);
-    solution->setCoord(0, -0.7);
-    solution->setCoord(1, -0.4);
-    */
-
     // Show result window
     ResultDialog resultDialog(this);
     ErrorEnum err = (ErrorEnum)resultDialog.setSolution(solution);
     if (err != ERR_OK)
     {
-        delete [] solution;
+        delete solution;
         delete [] sol;
         return;
     }
@@ -194,7 +185,7 @@ void MainWindow::onSolve()
     if (resultDialog.exec() != QDialog::Accepted)
         return;
 
-    delete [] solution;
+    delete solution;
     delete [] sol;
 }
 
